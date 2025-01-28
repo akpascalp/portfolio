@@ -1,9 +1,8 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
-import AppConfigurator from './AppConfigurator.vue';
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 
-const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
+const { toggleDarkMode, isDarkTheme } = useLayout();
 
 const nestedMenuitems = ref([
     {
@@ -16,14 +15,34 @@ const nestedMenuitems = ref([
         label: 'Contact'
     }
 ]);
+
+const isVisible = ref(true);
+let lastScrollTop = 0;
+
+const handleScroll = () => {
+    const scrollTop = document.documentElement.scrollTop;
+    if (scrollTop > lastScrollTop) {
+        // Scroll down
+        isVisible.value = false;
+    } else {
+        // Scroll up
+        isVisible.value = true;
+    }
+    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // For Mobile or negative scrolling
+};
+
+onMounted(() => {
+    window.addEventListener('scroll', handleScroll);
+});
+
+onUnmounted(() => {
+    window.removeEventListener('scroll', handleScroll);
+});
 </script>
 
 <template>
-    <div class="layout-topbar">
+    <div :class="['layout-topbar', { 'translate-y-full': !isVisible, 'transition-transform duration-300 ease-in-out': true }]">
         <div class="layout-topbar-logo-container">
-            <button class="layout-menu-button layout-topbar-action" @click="toggleMenu">
-                <i class="pi pi-bars"></i>
-            </button>
             <router-link to="/" class="layout-topbar-logo">
                 <span>Pascal PHAM</span>
             </router-link>
@@ -42,24 +61,17 @@ const nestedMenuitems = ref([
                 <button type="button" class="layout-topbar-action" @click="toggleDarkMode">
                     <i :class="['pi', { 'pi-moon': isDarkTheme, 'pi-sun': !isDarkTheme }]"></i>
                 </button>
-                <div class="relative">
-                    <button
-                        v-styleclass="{ selector: '@next', enterFromClass: 'hidden', enterActiveClass: 'animate-scalein', leaveToClass: 'hidden', leaveActiveClass: 'animate-fadeout', hideOnOutsideClick: true }"
-                        type="button"
-                        class="layout-topbar-action layout-topbar-action-highlight"
-                    >
-                        <i class="pi pi-palette"></i>
-                    </button>
-                    <AppConfigurator />
-                </div>
             </div>
-
-            <button
-                class="layout-topbar-menu-button layout-topbar-action"
-                v-styleclass="{ selector: '@next', enterFromClass: 'hidden', enterActiveClass: 'animate-scalein', leaveToClass: 'hidden', leaveActiveClass: 'animate-fadeout', hideOnOutsideClick: true }"
-            >
-                <i class="pi pi-ellipsis-v"></i>
-            </button>
         </div>
     </div>
 </template>
+
+<style scoped>
+.layout-topbar {
+    transform: translateY(0);
+}
+
+.layout-topbar.translate-y-full {
+    transform: translateY(-100%);
+}
+</style>
