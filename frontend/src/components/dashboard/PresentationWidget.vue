@@ -31,42 +31,40 @@ const technologies = ref([
 </script>
 
 <template>
-    <div class="col-span-12 lg:col-span-6 xl:col-span-6">
-        <Card>
-            <template #content>
-                <div class="grid grid-cols-2 gap-8">
-                    <img alt="user header" src="/profil.jpg" />
-                    <div class="flex flex-col gap-2 mb-4">
-                        <span class="block text-muted-color font-medium">{{ name }}</span>
-                        <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">{{ title }}</div>
-                        <div class="text-muted-color dark:text-surface-400">{{ subTitle }}</div>
-                        <div class="flex items-center text-surface-900 dark:text-surface-0 mt-2 gap-2">
-                            <i class="pi pi-star"></i>
-                            <p>+{{ exp }} ans d'exp.</p>
-                        </div>
-                        <div class="flex items-center text-surface-900 dark:text-surface-0 mt-2">
-                            <i class="pi pi-map"></i>
-                            <div class="ml-2">
-                                {{ loc }}
-                            </div>
-                        </div>
-                        <div class="flex flex-col mt-2 gap-2">
-                            <a v-for="link in links" v-bind:key="link.text" :href="link.url" target="_blank" class="flex gap-2 items-center text-surface-900 dark:text-surface-0">
-                                <i :class="link.icon"></i>
-                                <p class="underline">{{ link.text }}</p>
-                            </a>
+    <Card>
+        <template #content>
+            <div class="grid grid-cols-2 gap-8">
+                <img alt="user header" src="/profil.jpg" />
+                <div class="flex flex-col gap-2 mb-4">
+                    <span class="block text-muted-color font-medium">{{ name }}</span>
+                    <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">{{ title }}</div>
+                    <div class="text-muted-color dark:text-surface-400">{{ subTitle }}</div>
+                    <div class="flex items-center text-surface-900 dark:text-surface-0 mt-2 gap-2">
+                        <i class="pi pi-star"></i>
+                        <p>+{{ exp }} ans d'exp.</p>
+                    </div>
+                    <div class="flex items-center text-surface-900 dark:text-surface-0 mt-2">
+                        <i class="pi pi-map"></i>
+                        <div class="ml-2">
+                            {{ loc }}
                         </div>
                     </div>
+                    <div class="flex flex-col mt-2 gap-2">
+                        <a v-for="link in links" v-bind:key="link.text" :href="link.url" target="_blank" class="flex gap-2 items-center text-surface-900 dark:text-surface-0">
+                            <i :class="link.icon"></i>
+                            <p class="underline">{{ link.text }}</p>
+                        </a>
+                    </div>
                 </div>
-            </template>
-            <template #footer>
-                <div class="flex mt-2 gap-3 justify-center">
-                    <Chip v-for="tech in technologies" :key="tech.name">
-                        <img :src="tech.logo" :alt="tech.name + ' logo'" class="w-6" />
-                        <span>{{ tech.name }}</span>
-                    </Chip>
-                </div>
-            </template>
-        </Card>
-    </div>
+            </div>
+        </template>
+        <template #footer>
+            <div class="flex mt-2 gap-3 justify-center">
+                <Chip v-for="tech in technologies" :key="tech.name">
+                    <img :src="tech.logo" :alt="tech.name + ' logo'" class="w-6" />
+                    <span>{{ tech.name }}</span>
+                </Chip>
+            </div>
+        </template>
+    </Card>
 </template>

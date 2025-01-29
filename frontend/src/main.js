@@ -6,6 +6,7 @@ import Aura from '@primevue/themes/aura';
 import PrimeVue from 'primevue/config';
 import ConfirmationService from 'primevue/confirmationservice';
 import ToastService from 'primevue/toastservice';
+import VueSignaturePad from 'vue-signature-pad';
 
 import '@/assets/styles.scss';
 import '@/assets/tailwind.css';
@@ -23,5 +24,6 @@ app.use(PrimeVue, {
 });
 app.use(ToastService);
 app.use(ConfirmationService);
+app.use(VueSignaturePad);
 
 app.mount('#app');

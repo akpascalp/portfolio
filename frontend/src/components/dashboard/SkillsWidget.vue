@@ -81,16 +81,14 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="col-span-12 lg:col-span-6 xl:col-span-4">
-        <Card>
-            <template #header>
-                <div class="flex justify-center text-xl mt-6">Technologies</div>
-            </template>
-            <template #content>
-                <div class="flex justify-center">
-                    <div id="graph"></div>
-                </div>
-            </template>
-        </Card>
-    </div>
+    <Card>
+        <template #header>
+            <div class="flex justify-center text-xl mt-6">Technologies</div>
+        </template>
+        <template #content>
+            <div class="flex justify-center">
+                <div id="graph"></div>
+            </div>
+        </template>
+    </Card>
 </template>
