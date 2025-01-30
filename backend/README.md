@@ -4,7 +4,7 @@ This project is the backend of my portfolio, developed with FastAPI.
 
 ## Prerequisites
 
-- Python 3.13+
+- Python 3.11+
 - FastAPI
 - uv for Python package and environment management. (https://docs.astral.sh/uv/)
 - Ruff
