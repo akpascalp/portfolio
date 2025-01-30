@@ -64,3 +64,38 @@ async def recognition(file: UploadFile = File(...)):
         return JSONResponse(content={"predictied": predicted_class})
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
+
+
+POPULATION = 1000  # Nombre d'individus
+STATE = {"S": 0.99, "I": 0.01, "R": 0, "day": 0}  # État initial
+
+def sir_step(S, I, R, beta, gamma):
+    new_I = beta * S * I
+    new_R = gamma * I
+    new_S = -new_I
+    return S + new_S, I + new_I - new_R, R + new_R
+
+@app.get("/start")
+async def start_simulation(S0: float, I0: float, beta: float, gamma: float):
+    global STATE
+    S0 = min(max(S0, 0), 1)
+    I0 = min(max(I0, 0), 1 - S0)
+    R0 = 1 - (S0 + I0)
+    STATE = {"S": S0, "I": I0, "R": R0, "beta": beta, "gamma": gamma, "day": 0}
+    return {"message": "Simulation démarrée"}
+
+@app.get("/step")
+async def step_simulation():
+    global STATE
+    S, I, R = STATE["S"], STATE["I"], STATE["R"]
+    beta, gamma = STATE["beta"], STATE["gamma"]
+
+    # Mise à jour du modèle SIR pour un jour
+    S, I, R = sir_step(S, I, R, beta, gamma)
+    STATE.update({"S": S, "I": I, "R": R, "day": STATE["day"] + 1})
+
+    # Génération des nouvelles positions
+    positions = np.random.uniform(-50, 50, (POPULATION, 3)).tolist()
+    states = np.random.choice(["S", "I", "R"], POPULATION, p=[S, I, R]).tolist()
+
+    return {"day": STATE["day"], "S": S, "I": I, "R": R, "positions": positions, "states": states}
