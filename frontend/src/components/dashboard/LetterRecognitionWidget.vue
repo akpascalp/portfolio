@@ -29,7 +29,7 @@ const sendDrawing = async () => {
             'Content-Type': 'multipart/form-data'
         }
     });
-    recognizedDigit.value = response.data.digit;
+    recognizedDigit.value = response.data.predictied;
 };
 
 const clearDrawing = () => {
