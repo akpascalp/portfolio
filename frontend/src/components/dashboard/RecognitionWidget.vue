@@ -45,7 +45,7 @@ const clearDrawing = () => {
         </template>
         <template #content>
             <div class="flex flex-col gap-2">
-                <div>Ecrivez une lettre ou un chiffre:</div>
+                <div>Dessinez une lettre ou un chiffre:</div>
                 <div class="flex flex-col items-center">
                     <VueSignaturePad width="175px" height="175px" ref="drawingPad" class="border" />
                     <div class="flex gap-2">
