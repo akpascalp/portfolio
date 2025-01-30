@@ -50,7 +50,7 @@ const clearDrawing = () => {
                     <button @click="sendDrawing" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Envoyer</button>
                     <button @click="clearDrawing" class="mt-4 px-4 py-2 bg-red-500 text-white rounded">Effacer</button>
                 </div>
-                <div v-if="recognizedDigit != ''" class="mt-4 text-xl">Chiffre reconnu : {{ recognizedDigit }}</div>
+                <div v-if="recognizedDigit !== ''" class="mt-4 text-xl">Chiffre reconnu : {{ recognizedDigit }}</div>
             </div>
         </template>
     </Card>
