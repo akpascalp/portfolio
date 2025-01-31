@@ -1,19 +1,22 @@
 <script setup>
-import { onMounted, ref, watch, onUnmounted } from "vue";
+import { onMounted, ref, watch, onUnmounted, computed } from 'vue';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import axios from 'axios';
 
-const params = ref({ S0: 0.99, I0: 0.01, beta: 0.3, gamma: 0.1 });
+const paramsInit = { S: 0.99, I: 0.01, R: null, beta: 0.3, gamma: 0.1, day: 0, population: 1000 };
+const params = ref({ ...paramsInit });
 let scene, camera, renderer, controls;
 const spheres = [];
-let interval = null;
-const currentDay = ref(0);
+const interval = ref(null);
 const colors = {
     susceptible: 0xa3c8ff,
     infected: 0xffa07a,
     recovered: 0x21a645
 };
+const isRunning = computed(() => {
+    return interval.value !== null;
+});
 
 const hexToCssColor = (hex) => {
     return `#${hex.toString(16).padStart(6, '0')}`;
@@ -24,21 +27,52 @@ const capitalize = (str) => {
 };
 
 const fetchSimulation = async () => {
-    const response = await axios.get('http://127.0.0.1:8000/step');
-    currentDay.value = response.data.day;
-    updateScene(response.data);
+    console.log(params.value);
+    const response = await axios.get('http://127.0.0.1:8000/sir', { params: params.value });
+    params.value = response.data;
+    updateScene();
 };
 
-const updateScene = (data) => {
-    // Vérifie si le nombre de sphères est suffisant avant de les manipuler
-    if (spheres.length !== data.positions.length) {
-        // Si les sphères n'ont pas été créées ou si le nombre a changé, recréer les sphères
-        spheres.forEach((sphere) => scene.remove(sphere)); // Enlever les anciennes sphères
-        spheres.length = 0; // Réinitialiser le tableau de sphères
+const calculateSpherePositions = (states) => {
+    const positions = [];
+    const radius = 75;
+    const numPoints = states.length;
 
-        // Créer les sphères avec les nouvelles positions et états
-        data.positions.forEach((pos, i) => {
-            const color = data.states[i] === 'S' ? colors.susceptible : data.states[i] === 'I' ? colors.infected : colors.recovered; // Vert menthe pour "R"
+    for (let i = 0; i < numPoints; i++) {
+        let r = radius * Math.cbrt(Math.random());
+        let theta = Math.random() * 2 * Math.PI;
+        let phi = Math.acos(2 * Math.random() - 1);
+
+        if (states[i] === 'I') {
+            r *= 0.1;
+        }
+
+        const x = r * Math.sin(phi) * Math.cos(theta);
+        const y = r * Math.sin(phi) * Math.sin(theta);
+        const z = r * Math.cos(phi);
+
+        positions.push([x, y, z]);
+    }
+
+    return positions;
+};
+
+const updateScene = () => {
+    const totalPopulation = params.value.population;
+    const numInfected = Math.max(0, Math.round(params.value.I * totalPopulation));
+    const numRecovered = Math.max(0, Math.round(params.value.R * totalPopulation));
+    const numSusceptible = Math.max(0, totalPopulation - numInfected - numRecovered);
+
+    const states = [...Array(numInfected).fill('I'), ...Array(numRecovered).fill('R'), ...Array(numSusceptible).fill('S')];
+
+    const positions = calculateSpherePositions(states);
+
+    if (spheres.length !== positions.length) {
+        spheres.forEach((sphere) => scene.remove(sphere));
+        spheres.length = 0;
+
+        positions.forEach((pos, i) => {
+            const color = states[i] === 'S' ? colors.susceptible : states[i] === 'I' ? colors.infected : colors.recovered;
 
             const geometry = new THREE.SphereGeometry(1);
             const material = new THREE.MeshStandardMaterial({ color });
@@ -48,26 +82,20 @@ const updateScene = (data) => {
             spheres.push(sphere);
         });
     } else {
-        // Si les sphères existent déjà, effectuer une transition fluide
-        data.positions.forEach((pos, i) => {
+        positions.forEach((pos, i) => {
             const sphere = spheres[i];
-            const targetColor = data.states[i] === 'S' ? colors.susceptible : data.states[i] === 'I' ? colors.infected : colors.recovered;
+            const targetColor = states[i] === 'S' ? colors.susceptible : states[i] === 'I' ? colors.infected : colors.recovered;
 
-            // Transition fluide de la position
             new THREE.Vector3(...pos).lerp(sphere.position, 0.1);
 
-            // Transition fluide de la couleur
             const currentColor = sphere.material.color;
             currentColor.lerp(new THREE.Color(targetColor), 1);
         });
     }
 
-    // Vérifier si la propagation est terminée
-    const allRecovered = data.states.every((state) => state === 'R');
-    if (allRecovered) {
-        // Arrêter les requêtes périodiques
-        clearInterval(interval);
-        console.log('Propagation terminée, les requêtes sont arrêtées.');
+    const noInfected = states.every((state) => state !== 'I');
+    if (noInfected) {
+        clearInterval(interval.value);
     }
 };
 
@@ -86,7 +114,6 @@ onMounted(() => {
     const light = new THREE.AmbientLight(0xffffff);
     scene.add(light);
 
-    // Caméra éloignée pour mieux voir les points
     camera.position.z = 130;
 
     controls = new OrbitControls(camera, renderer.domElement);
@@ -94,9 +121,8 @@ onMounted(() => {
     controls.dampingFactor = 0.05;
     controls.screenSpacePanning = false;
     controls.minDistance = 10;
-    controls.maxDistance = 500; // Permet un meilleur zoom arrière
+    controls.maxDistance = 500; // improve zoom back
 
-    // Animation
     const animate = () => {
         requestAnimationFrame(animate);
         controls.update();
@@ -104,35 +130,35 @@ onMounted(() => {
     };
     animate();
 
-    axios.get('http://127.0.0.1:8000/start', { params: params.value }).then(() => {
-        interval = setInterval(fetchSimulation, 500);
+    axios.get('http://127.0.0.1:8000/sir', { params: params.value }).then(() => {
+        interval.value = setInterval(fetchSimulation, 500);
     });
 });
 
 onUnmounted(() => {
-    if (interval) clearInterval(interval);
+    if (interval.value) clearInterval(interval.value);
 });
 
 const startSimulation = () => {
-    if (interval) return;
-    interval = setInterval(fetchSimulation, 500);
+    if (interval.value) return;
+    interval.value = setInterval(fetchSimulation, 500);
 };
 
 const pauseSimulation = () => {
-    clearInterval(interval);
-    interval = null;
+    clearInterval(interval.value);
+    interval.value = null;
 };
 
 const resetSimulation = () => {
-    clearInterval(interval);
-    interval = null;
-    currentDay.value = 0;
+    clearInterval(interval.value);
+    interval.value = null;
+    params.value = { ...paramsInit };
 };
 
 watch(
     params,
     () => {
-        axios.get('http://127.0.0.1:8000/start', { params: params.value });
+        axios.get('http://127.0.0.1:8000/sir', { params: params.value });
     },
     { deep: true }
 );
@@ -143,7 +169,7 @@ watch(
         <template #header>
             <div class="flex justify-between mt-4 mx-4">
                 <h1>Simulation</h1>
-                <div>Jour {{ currentDay }}</div>
+                <div>Jour {{ params.day }}</div>
             </div>
         </template>
         <template #content>
@@ -155,8 +181,8 @@ watch(
                     </IftaLabel>
                 </div>
                 <div class="grid grid-cols-3 gap-2 content-center">
-                    <Button @click="startSimulation" icon="pi pi-play-circle"></Button>
-                    <Button @click="pauseSimulation" icon="pi pi-pause-circle"></Button>
+                    <Button @click="startSimulation" icon="pi pi-play-circle" :disabled="isRunning"></Button>
+                    <Button @click="pauseSimulation" icon="pi pi-pause-circle" :disabled="!isRunning"></Button>
                     <Button @click="resetSimulation" icon="pi pi-fast-backward"></Button>
                 </div>
             </div>

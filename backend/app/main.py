@@ -65,37 +65,32 @@ async def recognition(file: UploadFile = File(...)):
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
-
-POPULATION = 1000  # Nombre d'individus
-STATE = {"S": 0.99, "I": 0.01, "R": 0, "day": 0}  # État initial
-
 def sir_step(S, I, R, beta, gamma):
     new_I = beta * S * I
     new_R = gamma * I
     new_S = -new_I
     return S + new_S, I + new_I - new_R, R + new_R
 
-@app.get("/start")
-async def start_simulation(S0: float, I0: float, beta: float, gamma: float):
-    global STATE
-    S0 = min(max(S0, 0), 1)
-    I0 = min(max(I0, 0), 1 - S0)
-    R0 = 1 - (S0 + I0)
-    STATE = {"S": S0, "I": I0, "R": R0, "beta": beta, "gamma": gamma, "day": 0}
-    return {"message": "Simulation démarrée"}
+def get_R_value(S: float, I: float):
+    S = min(max(S, 0), 1)
+    I = min(max(I, 0), 1 - S)
+    R = 1 - (S + I)
+    return R
 
-@app.get("/step")
-async def step_simulation():
-    global STATE
-    S, I, R = STATE["S"], STATE["I"], STATE["R"]
-    beta, gamma = STATE["beta"], STATE["gamma"]
-
+@app.get("/sir")
+async def step_simulation(S: float, I: float, beta: float, gamma: float, day: int, population: int, R: float | None = None):
+    if R is None:
+        R = get_R_value(S, I)
     # Mise à jour du modèle SIR pour un jour
     S, I, R = sir_step(S, I, R, beta, gamma)
-    STATE.update({"S": S, "I": I, "R": R, "day": STATE["day"] + 1})
+    day += 1
 
-    # Génération des nouvelles positions
-    positions = np.random.uniform(-50, 50, (POPULATION, 3)).tolist()
-    states = np.random.choice(["S", "I", "R"], POPULATION, p=[S, I, R]).tolist()
+    S = round(S, 2)
+    I = round(I, 2)
+    R = round(R, 2)
 
-    return {"day": STATE["day"], "S": S, "I": I, "R": R, "positions": positions, "states": states}
+    S = max(0, min(S, 1))
+    I = max(0, min(I, 1))
+    R = max(0, min(R, 1))
+
+    return {"day": day, "S": S, "I": I, "R": R, "beta": beta, "gamma": gamma, "population": population}
