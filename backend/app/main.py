@@ -53,15 +53,13 @@ async def recognition(file: UploadFile = File(...)):
 
         image = preprocess_image(image_bytes)
 
-        prediction = model.predict(image)
-        predicted_class = np.argmax(prediction)
+        prediction = model.predict(image)[0]
+        top_indices = prediction.argsort()[-3:][::-1]
+        top_predictions = [(int(idx) if idx < 10 else chr(idx + 55), float(prediction[idx])) for idx in top_indices]
 
-        if predicted_class < 10:
-            predicted_class = int(predicted_class)
-        else:
-            predicted_class = chr(predicted_class + 55)  # 10 -> 'A', 11 -> 'B', etc.
+        results = [{"class": pred[0], "score": round(pred[1] * 100, 2)} for pred in top_predictions]
 
-        return JSONResponse(content={"predictied": predicted_class})
+        return JSONResponse(content={"predictions": results})
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
