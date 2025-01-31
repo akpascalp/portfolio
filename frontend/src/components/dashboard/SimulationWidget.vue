@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, watch, onUnmounted, computed } from 'vue';
+import { onMounted, ref, onUnmounted, computed } from 'vue';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import axios from 'axios';
@@ -42,10 +42,6 @@ const calculateSpherePositions = (states) => {
         let r = radius * Math.cbrt(Math.random());
         let theta = Math.random() * 2 * Math.PI;
         let phi = Math.acos(2 * Math.random() - 1);
-
-        if (states[i] === 'I') {
-            r *= 0.1;
-        }
 
         const x = r * Math.sin(phi) * Math.cos(theta);
         const y = r * Math.sin(phi) * Math.sin(theta);
@@ -154,14 +150,6 @@ const resetSimulation = () => {
     interval.value = null;
     params.value = { ...paramsInit };
 };
-
-watch(
-    params,
-    () => {
-        axios.get('http://127.0.0.1:8000/sir', { params: params.value });
-    },
-    { deep: true }
-);
 </script>
 
 <template>
@@ -176,13 +164,13 @@ watch(
             <div class="flex justify-between">
                 <div class="flex flex-wrap gap-2">
                     <IftaLabel v-for="(value, key) in params" :key="key">
-                        <InputNumber v-model="params[key]" :step="0.01" style="width: 4rem" fluid />
+                        <InputNumber v-model="params[key]" :step="0.01" style="width: 5rem" fluid />
                         <label>{{ key }}</label>
                     </IftaLabel>
                 </div>
-                <div class="grid grid-cols-3 gap-2 content-center">
-                    <Button @click="startSimulation" icon="pi pi-play-circle" :disabled="isRunning"></Button>
-                    <Button @click="pauseSimulation" icon="pi pi-pause-circle" :disabled="!isRunning"></Button>
+                <div class="grid grid-cols-2 gap-8 mr-4 content-center">
+                    <Button v-show="!isRunning" @click="startSimulation" icon="pi pi-play-circle"></Button>
+                    <Button v-show="isRunning" @click="pauseSimulation" icon="pi pi-pause-circle"></Button>
                     <Button @click="resetSimulation" icon="pi pi-fast-backward"></Button>
                 </div>
             </div>
