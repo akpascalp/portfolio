@@ -1,0 +1,83 @@
+Prénoms : Anh-Khoa Pascal
+Nom: PHAM
+Adresse Postale: 92310 Sèvres
+Année de naissance: 1994
+
+Titre principal: INGÉNIEUR LOGICIEL PYTHON
+
+Petite description:
+Curieux, rigoureux et autonome, le partage de connaissances et le travail d'équipe sont pour moi des composantes essentielles du développement logiciel.
+
+CONTACT
+adresse mail: pham.anhkhoapascal@gmail.com
+Numéro de téléphone: 06 59 92 96 15
+
+EXPÉRIENCES
+Indépendant
+2024 - ACTUEL DÉVELOPPEUR FREELANCE
+House of SSJC: Outils gestion club de sport (membres, facturation,
+prospection, ...)
+Front-end en Vue.JS 3
+Back-end en Laravel
+
+DXOMARK
+2019 - 2024 LEAD SOFTWARE ENGINEER
+Responsable Software département "Audio Quality"
+Implémentation end-to-end d'outils pour opérateurs et industriels (clients finaux):
+mesures, tests, visualisation scores d'appareils
+Interface graphique (Python - PyQt, Vue.JS)
+Implémentation et intégration d’API REST (Flask, Flask-Smorest)
+Base de données (MongoDB)
+Bonnes pratiques de développement (SOLID, Clean Code, code review,
+documentation, refactoring, gestion dette technique)
+CI/CD: pipelines automatisées (Jenkins) - Tests automatisés (unitaire,
+intégration, performance) - code coverage - déploiements en conteneurs Docker
+Paris
+
+Adentis
+2017 - 2019 INGÉNIEUR FULL STACK - CONSULTANT
+Implémentation d'outils pour lignes de production industrielles:
+monitoring production temps-réel
+Simulation propriétés physiques de miroirs.
+Applications Web (Python - Django, VueJS)
+Capteurs Embarqués (RasperryPi, Python)
+Traitement d'Images (Détection & Quantification de Défaut)
+Saint-Gobain
+Paris
+
+FORMATION
+2012 - 2017 - ECE PARIS.LYON - ÉCOLE D’INGÉNIEURS
+DIPLÔME D'INGÉNIEUR, SYSTÈMES EMBARQUÉS
+- Tronc commun - High-Tech Généraliste
+- Spécialité Systèmes Embarqués
+- International option - course in English
+
+2016 - 2017 - UNIVERSITÉ PARIS SACLAY
+MASTER TRAITEMENT DU SIGNAL & DE L'IMAGE
+- Double diplôme
+- Master orienté Recherche en Traitement du Signal et de l'Image
+
+2024 - IBM DATA SCIENCE
+CERTIFICATION IBM DATA SCIENCE
+- Python: Keras, Scikit-learn, TensorFlow, Pandas, Seaborn, PyTorch, ...
+
+CENTRES
+D’INTÉRÊT
+PIANO Classique (+25 ans de pratique)
+PIANO Jazz (+15 ans de pratique)
+JUDO Ceinture Noire 1er Dan (+25 ans de pratique)
+
+LANGUES
+Français - natif
+Anglais - TOEIC 870; IELTS 6.5
+Vietnamien - faux débutant
+Japonais - débutant
+
+COMPÉTENCES
+- Python
+- Web (Django, Flask, VueJS...)
+- GUI (PyQT/PySide)
+- Base de données (MongoDB)
+- Architecture logicielle, Clean Code
+- CI/CD (Git, Jenkins, Docker...)
+- Data Science (Keras, Scikit-Learn, TensorFlow, ...)
