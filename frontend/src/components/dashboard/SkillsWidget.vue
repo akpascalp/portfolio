@@ -68,7 +68,7 @@ const createGraph = () => {
         .showNavInfo(false)
         .linkAutoColorBy('type')
         .linkColor(() => 'rgb(0, 0, 0)')
-        .width(360)
+        .width(300)
         .height(310);
 
     // Spread nodes a little wider
