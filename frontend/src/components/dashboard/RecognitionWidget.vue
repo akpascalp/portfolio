@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue';
-import axios from 'axios';
+import axios from '@/service/axios';
 import { VueSignaturePad } from 'vue-signature-pad';
 
 const drawingPad = ref(null);
@@ -28,7 +28,7 @@ const sendDrawing = async () => {
     const formData = new FormData();
     formData.append('file', blob);
 
-    const response = await axios.post('http://localhost:8000/recognition/', formData, {
+    const response = await axios.post('/recognition/', formData, {
         headers: {
             'Content-Type': 'multipart/form-data'
         }
