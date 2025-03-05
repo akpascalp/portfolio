@@ -2,7 +2,7 @@
 import { onMounted, ref, onUnmounted, computed } from 'vue';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import axios from 'axios';
+import axios from '@/service/axios';
 
 const paramsInit = { S: 0.99, I: 0.01, R: null, beta: 0.3, gamma: 0.1, day: 0, population: 1000 };
 const params = ref({ ...paramsInit });
@@ -28,7 +28,7 @@ const capitalize = (str) => {
 
 const fetchSimulation = async () => {
     console.log(params.value);
-    const response = await axios.get('http://127.0.0.1:8000/sir', { params: params.value });
+    const response = await axios.get('/sir', { params: params.value });
     params.value = response.data;
     updateScene();
 };
@@ -126,7 +126,7 @@ onMounted(() => {
     };
     animate();
 
-    axios.get('http://127.0.0.1:8000/sir', { params: params.value }).then(() => {
+    axios.get('/sir', { params: params.value }).then(() => {
         interval.value = setInterval(fetchSimulation, 500);
     });
 });

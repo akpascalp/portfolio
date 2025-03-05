@@ -16,6 +16,7 @@ export default defineConfig({
             resolvers: [PrimeVueResolver()]
         })
     ],
+    envPrefix: 'VITE_',
     resolve: {
         alias: {
             '@': fileURLToPath(new URL('./src', import.meta.url))
