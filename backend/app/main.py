@@ -12,8 +12,10 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",  # development URL
-        "https://pascalpham.fr",  # production URL
-        "https://www.pascalpham.fr",  # production URL
+        # "https://pascalpham.fr",  # production URL
+        # "https://www.pascalpham.fr",  # production URL
+        "http://pascalpham.fr",  # production URL
+        "http://www.pascalpham.fr",  # production URL
     ],
     allow_credentials=True,
     allow_methods=["*"],
