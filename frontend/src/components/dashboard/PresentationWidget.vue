@@ -33,8 +33,8 @@ const technologies = ref([
 <template>
     <Card>
         <template #content>
-            <div class="grid grid-cols-2 gap-8">
-                <img alt="user header" src="/profil.jpg" />
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+                <img alt="user header" src="/profil.jpg" class="w-full md:w-auto" />
                 <div class="flex flex-col gap-2 mb-4">
                     <span class="block text-muted-color font-medium">{{ name }}</span>
                     <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">{{ title }}</div>
@@ -59,7 +59,7 @@ const technologies = ref([
             </div>
         </template>
         <template #footer>
-            <div class="flex mt-2 gap-3 justify-center">
+            <div class="flex flex-wrap mt-2 gap-3 justify-center">
                 <Chip v-for="tech in technologies" :key="tech.name">
                     <img :src="tech.logo" :alt="tech.name + ' logo'" class="w-6" />
                     <span>{{ tech.name }}</span>
